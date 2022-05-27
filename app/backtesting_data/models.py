@@ -11,7 +11,7 @@ class LazyPortfolio(models.Model):
 class Ticker(models.Model):
     symbol = models.CharField(max_length=100)
     portfolio = models.ManyToManyField(LazyPortfolio, through="LazyPortfolioTicker")
-    equivalents = models.ManyToManyField("self", null=True, blank=True)
+    equivalents = models.ManyToManyField("self", blank=True)
     inception_date = models.DateField()
 
     def __str__(self):
