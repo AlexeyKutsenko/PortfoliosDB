@@ -5,6 +5,9 @@ from backtesting_data.models import LazyPortfolio, Ticker, LazyPortfolioTicker
 
 class LazyPortfolioTickerInline(admin.TabularInline):
     model = LazyPortfolioTicker
+    autocomplete_fields = (
+        'ticker',
+    )
 
 
 class LazyPortfolioAdmin(admin.ModelAdmin):
