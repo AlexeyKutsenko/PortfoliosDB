@@ -9,7 +9,7 @@ class LazyPortfolio(models.Model):
 
 
 class Ticker(models.Model):
-    symbol = models.CharField(max_length=100)
+    symbol = models.CharField(max_length=100, unique=True)
     portfolio = models.ManyToManyField(LazyPortfolio, through="LazyPortfolioTicker")
     equivalents = models.ManyToManyField("self", blank=True)
     inception_date = models.DateField()
@@ -21,7 +21,7 @@ class Ticker(models.Model):
 class LazyPortfolioTicker(models.Model):
     portfolio = models.ForeignKey(LazyPortfolio, models.CASCADE)
     ticker = models.ForeignKey(Ticker, models.CASCADE)
-    percentage = models.IntegerField(null=False)
+    percentage = models.FloatField(null=False)
 
     def __str__(self):
         return f'{self.portfolio} {self.ticker} {self.percentage}'

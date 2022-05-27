@@ -18,6 +18,7 @@ class LazyPortfolioAdmin(admin.ModelAdmin):
 
 
 class TickerAdmin(admin.ModelAdmin):
+    list_display = ('symbol', )
     search_fields = ('symbol',)
     autocomplete_fields = ('equivalents',)
 
