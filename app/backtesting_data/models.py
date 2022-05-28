@@ -1,3 +1,5 @@
+import csv
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -7,6 +9,14 @@ class LazyPortfolio(models.Model):
 
     def __str__(self):
         return self.name
+
+    def make_csv(self, path):
+        full_path = path / f'{self.name}.csv'
+        with open(full_path, 'x') as csv_file:
+            writer = csv.writer(csv_file, delimiter=',')
+            writer.writerow(['Symbol, Weight'])
+            for portfolio_ticker in self.lazyportfolioticker_set.all():
+                writer.writerow([portfolio_ticker.ticker.symbol, f'{portfolio_ticker.weight}%'])
 
 
 class Ticker(models.Model):

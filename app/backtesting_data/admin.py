@@ -1,3 +1,7 @@
+from datetime import datetime
+from pathlib import Path
+
+from django.conf import settings
 from django.contrib import admin
 from django.db.models import Sum, Case, When, F
 
@@ -12,6 +16,7 @@ class LazyPortfolioTickerInline(admin.TabularInline):
 
 
 class LazyPortfolioAdmin(admin.ModelAdmin):
+    actions = ['make_csv_files']
     list_display = ('name', 'bond_percentage')
     search_fields = ('name',)
     inlines = [
@@ -36,6 +41,15 @@ class LazyPortfolioAdmin(admin.ModelAdmin):
 
     def bond_percentage(self, obj):
         return obj.bond_percentage
+
+    def make_csv_files(self, request, queryset):
+        """
+        Make CSV files for the selected portfolios
+        """
+        csv_path = Path(settings.CSV_ROOT / str(datetime.now()))
+        csv_path.mkdir(parents=True, exist_ok=True)
+        for portfolio in queryset:
+            portfolio.make_csv(csv_path)
 
 
 class TickerAdmin(admin.ModelAdmin):
