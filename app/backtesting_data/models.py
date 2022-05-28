@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class LazyPortfolio(models.Model):
@@ -9,10 +10,17 @@ class LazyPortfolio(models.Model):
 
 
 class Ticker(models.Model):
-    symbol = models.CharField(max_length=100, unique=True)
-    portfolio = models.ManyToManyField(LazyPortfolio, through="LazyPortfolioTicker")
+    class TickerTypes(models.TextChoices):
+        BONDS = 'Bonds', _('Bonds')
+        COMMODITIES = 'Comm', _('Commodities')
+        STOCKS = 'Stocks', _('Stocks')
+
     equivalents = models.ManyToManyField("self", blank=True)
+    expense_ratio = models.FloatField()
     inception_date = models.DateField()
+    portfolio = models.ManyToManyField(LazyPortfolio, through="LazyPortfolioTicker")
+    symbol = models.CharField(max_length=100, unique=True)
+    type = models.CharField(max_length=10, choices=TickerTypes.choices, default=TickerTypes.STOCKS)
 
     def __str__(self):
         return self.symbol
@@ -21,7 +29,7 @@ class Ticker(models.Model):
 class LazyPortfolioTicker(models.Model):
     portfolio = models.ForeignKey(LazyPortfolio, models.CASCADE)
     ticker = models.ForeignKey(Ticker, models.CASCADE)
-    percentage = models.FloatField(null=False)
+    weight = models.FloatField(null=False)
 
     def __str__(self):
-        return f'{self.portfolio} {self.ticker} {self.percentage}'
+        return f'{self.portfolio} {self.ticker} {self.weight}'
