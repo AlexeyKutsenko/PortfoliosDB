@@ -2,6 +2,7 @@ import csv
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from sanitize_filename import sanitize
 
 
 class LazyPortfolio(models.Model):
@@ -11,8 +12,8 @@ class LazyPortfolio(models.Model):
         return self.name
 
     def make_csv(self, path):
-        full_path = path / f'{self.name}.csv'
-        with open(full_path, 'x') as csv_file:
+        full_path = path / sanitize(f'{self.name}.csv')
+        with open(full_path, 'w+') as csv_file:
             writer = csv.writer(csv_file, delimiter=',')
             writer.writerow(['Symbol, Weight'])
             for portfolio_ticker in self.lazyportfolioticker_set.all():
